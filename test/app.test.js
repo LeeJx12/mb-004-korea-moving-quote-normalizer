@@ -58,4 +58,18 @@ test('has standalone canonical and crawlable intent copy', () => {
   assert.match(doc.querySelector('meta[name="description"]').content, /포장이사 견적 2~3개/);
   assert.match(doc.body.textContent, /이사 추가금 위험은 어떻게 찾나요/);
   assert.match(doc.body.textContent, /시장 시세나 적정가를 판정하지 않습니다/);
+  assert.equal(doc.querySelector('a[href="#quote-checklist"]').textContent, '견적 비교 체크리스트 보기');
+  assert.equal(doc.querySelectorAll('#quote-checklist').length, 1);
+  assert.match(doc.querySelector('#quote-checklist').textContent, /포함·별도·미기재를 구분하세요/);
 });
+
+test('records privacy-light page-view and explicit calculator-completion events locally', () => {
+  const dom = app(); const doc = dom.window.document;
+  assert.deepEqual(JSON.parse(dom.window.localStorage.getItem('movingQuoteEventsV1')), {page_view: 1});
+  const seen = [];
+  doc.addEventListener('movingquote:event', event => seen.push(event.detail.name));
+  doc.querySelector('#calc').click();
+  assert.deepEqual(JSON.parse(dom.window.localStorage.getItem('movingQuoteEventsV1')), {page_view: 1, calculator_completion: 1});
+  assert.deepEqual(seen, ['calculator_completion']);
+});
+
