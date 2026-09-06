@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://leejx12.github.io/mb-004-korea-moving-quote-normalizer/sitemap.xml
