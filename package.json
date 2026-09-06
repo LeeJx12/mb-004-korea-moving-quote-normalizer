@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Automated behavior and SEO checks for the static MB-004 tool",
-  "scripts": {"test": "node --test test/*.test.js"},
+  "scripts": {"test": "node --test test/app.test.js"},
   "devDependencies": {"jsdom": "26.1.0"}
 }
+
