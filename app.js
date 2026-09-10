@@ -104,6 +104,21 @@
 
   window.setMovingQuoteEventTransport = adapter => { eventTransport = typeof adapter === 'function' ? adapter : null; };
 
+  function sourceBucket() {
+    const declaredSource = new URLSearchParams(window.location.search).get('src');
+    if (declaredSource === 'owned-guide') return 'referral';
+    if (!document.referrer) return 'direct';
+    try {
+      const referrerHost = new URL(document.referrer).hostname.toLowerCase();
+      if (referrerHost === window.location.hostname.toLowerCase()) return 'referral';
+      if (/(^|\.)(google|naver|bing|daum)\./.test(referrerHost)) return 'search';
+      if (/(^|\.)(instagram|facebook|twitter|x|t\.co|kakao)\./.test(referrerHost)) return 'social';
+      return 'referral';
+    } catch (_) {
+      return 'direct';
+    }
+  }
+
   const $ = selector => document.querySelector(selector);
   const activeQuotes = () => model.quotes.slice(0, model.activeQuoteCount);
 
@@ -220,7 +235,7 @@
     renderQuestions(valid);
     if (!model.demo && allReviewed(valid)) {
       const totalUnresolved = valid.reduce((sum,result) => sum + result.unresolvedItems.length, 0);
-      emitEvent('comparison_complete', {quote_count:valid.length, unresolved_bucket:totalUnresolved === 0 ? '0' : totalUnresolved <= 2 ? '1–2' : '3+'});
+      emitEvent('comparison_complete', {quote_count:valid.length, unresolved_bucket:totalUnresolved === 0 ? '0' : totalUnresolved <= 2 ? '1-2' : '3-plus'});
     }
   }
 
@@ -326,6 +341,6 @@
 
   restore();
   renderAll();
-  emitEvent('landing_view', {source_bucket:'direct', demo:false});
+  emitEvent('landing_view', {source_bucket:sourceBucket(), demo:false});
 })();
 
